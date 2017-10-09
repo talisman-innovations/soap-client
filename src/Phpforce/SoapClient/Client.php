@@ -65,6 +65,13 @@ class Client extends AbstractHasDispatcher implements ClientInterface
     protected $loginResult;
 
     /**
+     * Time the last call was made
+     * 
+     * @var int
+     */
+    protected $lastCall;
+    
+    /**
      * Construct Salesforce SOAP client
      *
      * @param SoapClient $soapClient SOAP client
@@ -585,7 +592,8 @@ class Client extends AbstractHasDispatcher implements ClientInterface
     protected function init()
     {
         // If there’s no session header yet, this means we haven’t yet logged in
-        if (!$this->getSessionHeader()) {
+        // If the session hasn't been used for 1hr, re-login as session may be stale
+        if (!$this->getSessionHeader()  || (time() - $this->lastCall) >= 3600) {
             $this->doLogin($this->username, $this->password, $this->token);
         }
     }
@@ -636,6 +644,7 @@ class Client extends AbstractHasDispatcher implements ClientInterface
         $this->loginResult = $loginResult;
         $this->setEndpointLocation($loginResult->getServerUrl());
         $this->setSessionId($loginResult->getSessionId());
+        $this->lastCall = time();
     }
 
     /**
