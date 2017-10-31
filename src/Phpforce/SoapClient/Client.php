@@ -1,4 +1,5 @@
 <?php
+
 namespace Phpforce\SoapClient;
 
 use Phpforce\Common\AbstractHasDispatcher;
@@ -12,13 +13,13 @@ use Phpforce\SoapClient\Exception;
  *
  * @author David de Boer <david@ddeboer.nl>
  */
-class Client extends AbstractHasDispatcher implements ClientInterface
-{
+class Client extends AbstractHasDispatcher implements ClientInterface {
     /*
      * SOAP namespace
      *
      * @var string
      */
+
     const SOAP_NAMESPACE = 'urn:enterprise.soap.sforce.com';
 
     /**
@@ -70,7 +71,7 @@ class Client extends AbstractHasDispatcher implements ClientInterface
      * @var int
      */
     protected $lastCall;
-    
+
     /**
      * Construct Salesforce SOAP client
      *
@@ -79,8 +80,7 @@ class Client extends AbstractHasDispatcher implements ClientInterface
      * @param string     $password   Salesforce password
      * @param string     $token      Salesforce security token
      */
-    public function __construct(SoapClient $soapClient, $username, $password, $token)
-    {
+    public function __construct(SoapClient $soapClient, $username, $password, $token) {
         $this->soapClient = $soapClient;
         $this->username = $username;
         $this->password = $password;
@@ -90,24 +90,20 @@ class Client extends AbstractHasDispatcher implements ClientInterface
     /**
      * {@inheritdoc}
      */
-    public function convertLead(array $leadConverts)
-    {
+    public function convertLead(array $leadConverts) {
         return $this->call(
-            'convertLead',
-            array(
-                'leadConverts' => $leadConverts
-            )
+                        'convertLead', array(
+                    'leadConverts' => $leadConverts
+                        )
         );
     }
 
     /**
      * {@inheritdoc}
      */
-    public function emptyRecycleBin(array $ids)
-    {
+    public function emptyRecycleBin(array $ids) {
         $result = $this->call(
-            'emptyRecycleBin',
-            array('ids'   => $ids)
+                'emptyRecycleBin', array('ids' => $ids)
         );
 
         return $this->checkResult($result, $ids);
@@ -116,11 +112,9 @@ class Client extends AbstractHasDispatcher implements ClientInterface
     /**
      * {@inheritdoc}
      */
-    public function create(array $objects, $type)
-    {
+    public function create(array $objects, $type) {
         $result = $this->call(
-            'create',
-            array('sObjects' => $this->createSoapVars($objects, $type))
+                'create', array('sObjects' => $this->createSoapVars($objects, $type))
         );
 
         return $this->checkResult($result, $objects);
@@ -129,11 +123,9 @@ class Client extends AbstractHasDispatcher implements ClientInterface
     /**
      * {@inheritdoc}
      */
-    public function delete(array $ids)
-    {
+    public function delete(array $ids) {
         $result = $this->call(
-            'delete',
-            array('ids' => $ids)
+                'delete', array('ids' => $ids)
         );
 
         return $this->checkResult($result, $ids);
@@ -142,83 +134,73 @@ class Client extends AbstractHasDispatcher implements ClientInterface
     /**
      * {@inheritdoc}
      */
-    public function describeGlobal()
-    {
+    public function describeGlobal() {
         return $this->call('describeGlobal');
     }
 
     /**
      * {@inheritdoc}
      */
-    public function describeSObjects(array $objects)
-    {
+    public function describeSObjects(array $objects) {
         return $this->call('describeSObjects', $objects);
     }
 
     /**
      * {@inheritdoc}
      */
-    public function describeTabs()
-    {
+    public function describeTabs() {
         return $this->call('describeTabs');
     }
 
     /**
      * {@inheritdoc}
      */
-    public function getDeleted($objectType, \DateTime $startDate, \DateTime $endDate)
-    {
+    public function getDeleted($objectType, \DateTime $startDate, \DateTime $endDate) {
         return $this->call(
-            'getDeleted',
-            array(
-                'sObjectType'   => $objectType,
-                'startDate'     => $startDate,
-                'endDate'       => $endDate
-            )
+                        'getDeleted', array(
+                    'sObjectType' => $objectType,
+                    'startDate' => $startDate,
+                    'endDate' => $endDate
+                        )
         );
     }
 
     /**
      * {@inheritdoc}
      */
-    public function getUpdated($objectType, \DateTime $startDate, \DateTime $endDate)
-    {
+    public function getUpdated($objectType, \DateTime $startDate, \DateTime $endDate) {
         return $this->call(
-            'getUpdated',
-            array(
-                'sObjectType'   => $objectType,
-                'startDate'     => $startDate,
-                'endDate'       => $endDate
-            )
+                        'getUpdated', array(
+                    'sObjectType' => $objectType,
+                    'startDate' => $startDate,
+                    'endDate' => $endDate
+                        )
         );
     }
 
     /**
      * {@inheritdoc}
      */
-    public function getUserInfo()
-    {
+    public function getUserInfo() {
         return $this->call('getUserInfo');
     }
 
     /**
      * {@inheritdoc}
      */
-    public function invalidateSessions(array $sessionIds)
-    {
+    public function invalidateSessions(array $sessionIds) {
         throw new \BadMethodCallException('Not yet implemented');
     }
 
     /**
      * {@inheritdoc}
      */
-    public function doLogin($username, $password, $token)
-    {
+    public function doLogin($username, $password, $token) {
         $result = $this->soapClient->login(
-            array(
-                'username'  => $username,
-                'password'  => $password.$token
-            )
+                array(
+                    'username' => $username,
+                    'password' => $password . $token
+                )
         );
         $this->setLoginResult($result->result);
 
@@ -228,8 +210,7 @@ class Client extends AbstractHasDispatcher implements ClientInterface
     /**
      * {@inheritdoc}
      */
-    public function login($username, $password, $token)
-    {
+    public function login($username, $password, $token) {
         return $this->doLogin($username, $password, $token);
     }
 
@@ -238,8 +219,7 @@ class Client extends AbstractHasDispatcher implements ClientInterface
      *
      * @return Result\LoginResult
      */
-    public function getLoginResult()
-    {
+    public function getLoginResult() {
         if (null === $this->loginResult) {
             $this->login($this->username, $this->password, $this->token);
         }
@@ -250,8 +230,7 @@ class Client extends AbstractHasDispatcher implements ClientInterface
     /**
      * {@inheritdoc}
      */
-    public function logout()
-    {
+    public function logout() {
         $this->call('logout');
         $this->sessionHeader = null;
         $this->setSessionId(null);
@@ -260,12 +239,11 @@ class Client extends AbstractHasDispatcher implements ClientInterface
     /**
      * {@inheritdoc}
      */
-    public function merge(array $mergeRequests, $type)
-    {
+    public function merge(array $mergeRequests, $type) {
         foreach ($mergeRequests as $mergeRequest) {
             if (!($mergeRequest instanceof Request\MergeRequest)) {
                 throw new \InvalidArgumentException(
-                    'Each merge request must be an instance of MergeRequest'
+                'Each merge request must be an instance of MergeRequest'
                 );
             }
 
@@ -282,35 +260,28 @@ class Client extends AbstractHasDispatcher implements ClientInterface
             }
 
             $mergeRequest->masterRecord = new \SoapVar(
-                $this->createSObject($mergeRequest->masterRecord, $type),
-                SOAP_ENC_OBJECT,
-                $type,
-                self::SOAP_NAMESPACE
+                    $this->createSObject($mergeRequest->masterRecord, $type), SOAP_ENC_OBJECT, $type, self::SOAP_NAMESPACE
             );
         }
 
         return $this->call(
-            'merge',
-            array('request' => $mergeRequests)
+                        'merge', array('request' => $mergeRequests)
         );
     }
 
     /**
      * {@inheritdoc}
      */
-    public function process(array $processResults)
-    {
+    public function process(array $processResults) {
         throw new \BadMethodCallException('Not yet implemented');
     }
 
     /**
      * {@inheritdoc}
      */
-    public function query($query)
-    {
+    public function query($query) {
         $result = $this->call(
-            'query',
-            array('queryString' => $query)
+                'query', array('queryString' => $query)
         );
 
         return new Result\RecordIterator($this, $result);
@@ -319,11 +290,9 @@ class Client extends AbstractHasDispatcher implements ClientInterface
     /**
      * {@inheritdoc}
      */
-    public function queryAll($query)
-    {
+    public function queryAll($query) {
         $result = $this->call(
-            'queryAll',
-            array('queryString' => $query)
+                'queryAll', array('queryString' => $query)
         );
 
         return new Result\RecordIterator($this, $result);
@@ -332,50 +301,42 @@ class Client extends AbstractHasDispatcher implements ClientInterface
     /**
      * {@inheritdoc}
      */
-    public function queryMore($queryLocator)
-    {
+    public function queryMore($queryLocator) {
         return $this->call(
-            'queryMore',
-            array('queryLocator' => $queryLocator)
+                        'queryMore', array('queryLocator' => $queryLocator)
         );
     }
 
     /**
      * {@inheritdoc}
      */
-    public function retrieve(array $fields, array $ids, $objectType)
-    {
+    public function retrieve(array $fields, array $ids, $objectType) {
         return $this->call(
-            'retrieve',
-            array(
-                'fieldList'   => implode(',', $fields),
-                'sObjectType' => $objectType,
-                'ids'         => $ids
-            )
+                        'retrieve', array(
+                    'fieldList' => implode(',', $fields),
+                    'sObjectType' => $objectType,
+                    'ids' => $ids
+                        )
         );
     }
 
     /**
      * {@inheritdoc}
      */
-    public function search($searchString)
-    {
+    public function search($searchString) {
         return $this->call(
-            'search',
-            array(
-                'searchString'  => $searchString
-            )
+                        'search', array(
+                    'searchString' => $searchString
+                        )
         );
     }
 
     /**
      * {@inheritdoc}
      */
-    public function undelete(array $ids)
-    {
+    public function undelete(array $ids) {
         $result = $this->call(
-            'undelete',
-            array('ids' => $ids)
+                'undelete', array('ids' => $ids)
         );
 
         return $this->checkResult($result, $ids);
@@ -384,11 +345,9 @@ class Client extends AbstractHasDispatcher implements ClientInterface
     /**
      * {@inheritdoc}
      */
-    public function update(array $objects, $type)
-    {
+    public function update(array $objects, $type) {
         $result = $this->call(
-            'update',
-            array('sObjects' => $this->createSoapVars($objects, $type))
+                'update', array('sObjects' => $this->createSoapVars($objects, $type))
         );
 
         return $this->checkResult($result, $objects);
@@ -397,14 +356,12 @@ class Client extends AbstractHasDispatcher implements ClientInterface
     /**
      * {@inheritdoc}
      */
-    public function upsert($externalIdFieldName, array $objects, $type)
-    {
+    public function upsert($externalIdFieldName, array $objects, $type) {
         return $this->call(
-            'upsert',
-            array(
-                'externalIDFieldName' => $externalIdFieldName,
-                'sObjects'            => $this->createSoapVars($objects, $type)
-            )
+                        'upsert', array(
+                    'externalIDFieldName' => $externalIdFieldName,
+                    'sObjects' => $this->createSoapVars($objects, $type)
+                        )
         );
     }
 
@@ -413,29 +370,25 @@ class Client extends AbstractHasDispatcher implements ClientInterface
      *
      * @return Result\GetServerTimestampResult
      */
-    public function getServerTimestamp()
-    {
+    public function getServerTimestamp() {
         return $this->call('getServerTimestamp');
     }
 
     /**
      * {@inheritdoc}
      */
-    public function resetPassword($userId)
-    {
+    public function resetPassword($userId) {
         throw new \BadMethodCallException('Not yet implemented');
     }
 
     /**
      * {@inheritdoc}
      */
-    public function sendEmail(array $emails)
-    {
+    public function sendEmail(array $emails) {
         $result = $this->call(
-            'sendEmail',
-            array(
-                'messages' => $this->createSoapVars($emails, 'SingleEmailMessage')
-            )
+                'sendEmail', array(
+            'messages' => $this->createSoapVars($emails, 'SingleEmailMessage')
+                )
         );
 
         return $this->checkResult($result, $emails);
@@ -444,14 +397,12 @@ class Client extends AbstractHasDispatcher implements ClientInterface
     /**
      * {@inheritdoc}
      */
-    public function setPassword($userId, $password)
-    {
+    public function setPassword($userId, $password) {
         return $this->call(
-            'setPassword',
-            array(
-                'userId'    => $userId,
-                'password'  => $password
-            )
+                        'setPassword', array(
+                    'userId' => $userId,
+                    'password' => $password
+                        )
         );
     }
 
@@ -463,8 +414,7 @@ class Client extends AbstractHasDispatcher implements ClientInterface
      *
      * @return \SoapVar[]
      */
-    protected function createSoapVars(array $objects, $type)
-    {
+    protected function createSoapVars(array $objects, $type) {
         $soapVars = array();
 
         foreach ($objects as $object) {
@@ -493,12 +443,8 @@ class Client extends AbstractHasDispatcher implements ClientInterface
      * @param \SoapVar $object
      * @return \SoapVar
      */
-    protected function fixFieldsToNullXml(\SoapVar $object)
-    {
-        if (isset($object->enc_value->fieldsToNull)
-            && is_array($object->enc_value->fieldsToNull)
-            && count($object->enc_value->fieldsToNull) > 0)
-        {
+    protected function fixFieldsToNullXml(\SoapVar $object) {
+        if (isset($object->enc_value->fieldsToNull) && is_array($object->enc_value->fieldsToNull) && count($object->enc_value->fieldsToNull) > 0) {
             $xml = '';
             foreach ($object->enc_value->fieldsToNull as $fieldToNull) {
                 $xml .= '<fieldsToNull>' . $fieldToNull . '</fieldsToNull>';
@@ -518,16 +464,13 @@ class Client extends AbstractHasDispatcher implements ClientInterface
      * @throws Exception\SaveException  When Salesforce returned an error
      * @return array
      */
-    protected function checkResult(array $results, array $params)
-    {
+    protected function checkResult(array $results, array $params) {
         $exceptions = new Exception\SaveException();
 
         for ($i = 0; $i < count($results); $i++) {
 
             // If the param was an (s)object, set it’s Id field
-            if (is_object($params[$i])
-                && (!isset($params[$i]->Id) || null === $params[$i]->Id)
-                && $results[$i] instanceof Result\SaveResult) {
+            if (is_object($params[$i]) && (!isset($params[$i]->Id) || null === $params[$i]->Id) && $results[$i] instanceof Result\SaveResult) {
                 $params[$i]->Id = $results[$i]->getId();
             }
 
@@ -553,33 +496,36 @@ class Client extends AbstractHasDispatcher implements ClientInterface
      * @return array | \Traversable An empty array or a result object, such
      *                              as QueryResult, SaveResult, DeleteResult.
      */
-    protected function call($method, array $params = array())
-    {
-        $this->init();
-
-        // Prepare headers
-        $this->soapClient->__setSoapHeaders($this->getSessionHeader());
+    protected function call($method, array $params = array()) {
 
         $requestEvent = new Event\RequestEvent($method, $params);
         $this->dispatch(Events::REQUEST, $requestEvent);
 
-        try {
-            $result = $this->soapClient->$method($params);
-        } catch (\SoapFault $soapFault) {
-            $faultEvent = new Event\FaultEvent($soapFault, $requestEvent);
-            $this->dispatch(Events::FAULT, $faultEvent);
-
-            throw $soapFault;
+        for ($retry = 0; $retry < 2; $retry++) {
+            try {
+                $this->init();
+                $this->soapClient->__setSoapHeaders($this->getSessionHeader());
+                $result = $this->soapClient->$method($params);
+                break;
+            } catch (\SoapFault $soapFault) {
+                switch ($soapFault->faultcode) {
+                    case 'INVALID_SESSION_ID':
+                        $this->setSessionId(null);
+                        break;
+                    default:
+                        $faultEvent = new Event\FaultEvent($soapFault, $requestEvent);
+                        $this->dispatch(Events::FAULT, $faultEvent);
+                        throw $soapFault;
+                }
+            }
         }
-
         // No result e.g. for logout, delete with empty array
         if (!isset($result->result)) {
             return array();
         }
 
         $this->dispatch(
-            Events::RESPONSE,
-            new Event\ResponseEvent($requestEvent, $result->result)
+                Events::RESPONSE, new Event\ResponseEvent($requestEvent, $result->result)
         );
 
         return $result->result;
@@ -589,11 +535,10 @@ class Client extends AbstractHasDispatcher implements ClientInterface
      * Initialize connection
      *
      */
-    protected function init()
-    {
+    protected function init() {
         // If there’s no session header yet, this means we haven’t yet logged in
         // If the session hasn't been used for 1hr, re-login as session may be stale
-        if (!$this->getSessionHeader()  || (time() - $this->lastCall) >= 3600) {
+        if (!$this->getSessionHeader()) {
             $this->doLogin($this->username, $this->password, $this->token);
         }
     }
@@ -603,8 +548,7 @@ class Client extends AbstractHasDispatcher implements ClientInterface
      *
      * @param array $headers
      */
-    protected function setSoapHeaders(array $headers)
-    {
+    protected function setSoapHeaders(array $headers) {
         $soapHeaderObjects = array();
         foreach ($headers as $key => $value) {
             $soapHeaderObjects[] = new \SoapHeader(self::SOAP_NAMESPACE, $key, $value);
@@ -618,8 +562,7 @@ class Client extends AbstractHasDispatcher implements ClientInterface
      *
      * @return \SoapHeader
      */
-    protected function getSessionHeader()
-    {
+    protected function getSessionHeader() {
         return $this->sessionHeader;
     }
 
@@ -628,19 +571,15 @@ class Client extends AbstractHasDispatcher implements ClientInterface
      *
      * @param string $sessionId
      */
-    protected function setSessionId($sessionId)
-    {
+    protected function setSessionId($sessionId) {
         $this->sessionHeader = new \SoapHeader(
-            self::SOAP_NAMESPACE,
-            'SessionHeader',
-            array(
-                'sessionId' => $sessionId
-            )
+                self::SOAP_NAMESPACE, 'SessionHeader', array(
+            'sessionId' => $sessionId
+                )
         );
     }
 
-    protected function setLoginResult(Result\LoginResult $loginResult)
-    {
+    protected function setLoginResult(Result\LoginResult $loginResult) {
         $this->loginResult = $loginResult;
         $this->setEndpointLocation($loginResult->getServerUrl());
         $this->setSessionId($loginResult->getSessionId());
@@ -653,8 +592,7 @@ class Client extends AbstractHasDispatcher implements ClientInterface
      *
      * @param string $location
      */
-    protected function setEndpointLocation($location)
-    {
+    protected function setEndpointLocation($location) {
         $this->soapClient->__setLocation($location);
     }
 
@@ -668,8 +606,7 @@ class Client extends AbstractHasDispatcher implements ClientInterface
      *
      * @return object
      */
-    protected function createSObject($object, $objectType)
-    {
+    protected function createSObject($object, $objectType) {
         $sObject = new \stdClass();
 
         foreach (get_object_vars($object) as $field => $value) {
@@ -688,12 +625,12 @@ class Client extends AbstractHasDispatcher implements ClientInterface
             switch ($type) {
                 case 'date':
                     if ($value instanceof \DateTime) {
-                        $value  = $value->format('Y-m-d');
+                        $value = $value->format('Y-m-d');
                     }
                     break;
                 case 'dateTime':
                     if ($value instanceof \DateTime) {
-                        $value  = $value->format('Y-m-d\TH:i:sP');
+                        $value = $value->format('Y-m-d\TH:i:sP');
                     }
                     break;
                 case 'base64Binary':
@@ -706,5 +643,5 @@ class Client extends AbstractHasDispatcher implements ClientInterface
 
         return $sObject;
     }
-}
 
+}
